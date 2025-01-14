@@ -1,0 +1,310 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local active = false
+local candamage = false
+local canvisualize = false
+local rtype = "Ball"
+local realtype = Enum.PartType.Ball
+local sizefor = 1
+local transparency = 0
+local material = Enum.Material.ForceField
+local color = Color3.fromRGB(255,255,255)
+
+local partforvisualizing = Instance.new("Part")
+partforvisualizing.Color = color
+partforvisualizing.Transparency = transparency
+partforvisualizing.Anchored = true
+partforvisualizing.CanCollide = false
+partforvisualizing.Size = Vector3.new(sizefor,sizefor,sizefor)
+partforvisualizing.BottomSurface = Enum.SurfaceType.Smooth
+partforvisualizing.TopSurface = Enum.SurfaceType.Smooth
+
+local Window = Rayfield:CreateWindow({
+   Name = "Reach Universal",
+   Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
+   LoadingTitle = "Loading reach universal!",
+   LoadingSubtitle = "Made by ActuallyAverages!",
+   Theme = "DarkBlue", -- Check https://docs.sirius.menu/rayfield/configuration/themes
+
+   DisableRayfieldPrompts = false,
+   DisableBuildWarnings = false, -- Prevents Rayfield from warning when the script has a version mismatch with the interface
+
+   ConfigurationSaving = {
+      Enabled = true,
+      FolderName = nil, -- Create a custom folder for your hub/game
+      FileName = "Big Hub"
+   },
+
+   Discord = {
+      Enabled = false, -- Prompt the user to join your Discord server if their executor supports it
+      Invite = "noinvitelink", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ ABCD would be ABCD
+      RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+   },
+
+   KeySystem = false, -- Set this to true to use our key system
+   KeySettings = {
+      Title = "Untitled",
+      Subtitle = "Key System",
+      Note = "No method of obtaining the key is provided", -- Use this to tell the user how to get a key
+      FileName = "Key", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
+      SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+      GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+      Key = {"Hello"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+   }
+})
+
+local Tab = Window:CreateTab("Reach", "ruler") -- Title, Image
+
+local Section = Tab:CreateSection("Reach Related")
+
+local ToggleActive = Tab:CreateToggle({
+   Name = "Active",
+   CurrentValue = false,
+   Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+        active = Value
+        Rayfield:Notify({
+   Title = "Reach Toggling",
+   Content = "Reach is now "..tostring(active).."!",
+   Duration = 2,
+   Image = "swords",
+})
+   end,
+})
+
+local Input = Tab:CreateInput({
+   Name = "Size",
+   CurrentValue = "",
+   PlaceholderText = "( Size In Number )",
+   RemoveTextAfterFocusLost = false,
+   Flag = "Input1",
+   Callback = function(Text)
+        if tonumber(Text) ~= nil then
+            sizefor = tonumber(Text)
+        end
+        Rayfield:Notify({
+   Title = "New Reach Size!",
+   Content = "New reach size is "..tostring(size).."!",
+   Duration = 2,
+   Image = "swords",
+})
+   end,
+})
+
+local ToggleDamage = Tab:CreateToggle({
+   Name = "Damage (Can also be toggled by pressing J)",
+   CurrentValue = false,
+   Flag = "Toggle2", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+        candamage = Value
+         Rayfield:Notify({
+   Title = "Damage Toggling",
+   Content = "Damage is now "..tostring(candamage).."!",
+   Duration = 2,
+   Image = "swords",
+})
+   end,
+})
+
+local ToggleVisualizer = Tab:CreateToggle({
+   Name = "Visualize",
+   CurrentValue = false,
+   Flag = "Toggle3", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+        canvisualize = Value
+         Rayfield:Notify({
+   Title = "Visualizer Toggling",
+   Content = "Visualizer is now "..tostring(canvisualize).."!",
+   Duration = 2,
+   Image = "swords",
+})
+   end,
+})
+
+game:GetService("UserInputService").InputBegan:Connect(function(inp,gpe)
+    if not gpe then
+        if inp.KeyCode == Enum.KeyCode.J then
+            candamage = not candamage
+            ToggleDamage:Set(candamage)
+            Rayfield:Notify({
+   Title = "Damage Toggling",
+   Content = "Damage is now "..tostring(candamage).."!",
+   Duration = 2,
+   Image = "swords",
+})
+        end
+    end
+end)
+
+local Dropdown = Tab:CreateDropdown({
+   Name = "Reach Type",
+   Options = {"Ball","Block","Cylinder","Wedge"},
+   CurrentOption = {"Ball"},
+   MultipleOptions = false,
+   Flag = "Dropdown1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Options)
+        local thing = table.concat(Options,"")
+        rtype = thing
+        Rayfield:Notify({
+            Title = "New reach type!",
+            Content = "Reach type is now "..rtype.."!",
+            Duration = 2,
+            Image = "swords"
+        })
+        realtype = Enum.PartType[rtype]
+   end,
+})
+
+local Section = Tab:CreateSection("Customization")
+
+local ColorPicker = Tab:CreateColorPicker({
+    Name = "Visualizer Color",
+    Color = Color3.fromRGB(255,255,255),
+    Flag = "ColorPicker1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        color = Value
+    end
+})
+
+local Slider = Tab:CreateSlider({
+   Name = "Visualizer Transparency",
+   Range = {0, 1},
+   Increment = 0.01,
+   Suffix = "",
+   CurrentValue = 0,
+   Flag = "Slider1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+        transparency = Value
+   end,
+})
+
+local Dropdown = Tab:CreateDropdown({
+   Name = "Material",
+   Options = {"ForceField","Plastic","SmoothPlastic","Neon"},
+   CurrentOption = {"ForceField"},
+   MultipleOptions = false,
+   Flag = "Dropdown2", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Options)
+      material = Enum.Material[table.concat(Options,"")]
+   end,
+})
+
+local plr = game.Players.LocalPlayer
+ 
+local function onHit(hit,handle)
+    local victim = hit.Parent:FindFirstChildOfClass("Humanoid")
+	    if victim and victim.Parent.Name ~= game.Players.LocalPlayer.Name then
+		if dmgEnabled then
+	        for _,v in pairs(hit.Parent:GetChildren()) do
+	            if v:IsA("Part") then
+	                firetouchinterest(v,handle,0)
+	                firetouchinterest(v,handle,1)
+	            end
+			end
+		else
+			firetouchinterest(hit,handle,0)
+			firetouchinterest(hit,handle,1)
+		end
+    end
+end
+ 
+local function getWhiteList()
+    local wl = {}
+    for _,v in pairs(game.Players:GetPlayers()) do
+        if v ~= plr then
+            local char = v.Character
+            if char then
+                for _,q in pairs(char:GetChildren()) do
+                    if q:IsA("Part") then
+                        table.insert(wl,q)
+                    end
+                end
+            end
+        end
+    end
+    return wl
+end
+ 
+game:GetService("RunService").RenderStepped:connect(function()
+    if not active then return end
+	local s = plr.Character and plr.Character:FindFirstChildOfClass("Tool")
+	if not s then partforvisualizing.Parent = nil end
+    if s then
+        local handle = s:FindFirstChild("Handle") or s:FindFirstChildOfClass("Part")
+		if handle then
+			if canvisualize then
+				partforvisualizing.Parent = workspace
+			else
+				partforvisualizing.Parent = nil
+			end
+         partforvisualizing.Color = color
+         local reach = sizefor
+			if sizefor then
+				if rtype == "Ball" then
+					partforvisualizing.Shape = Enum.PartType.Ball
+					partforvisualizing.Material = material
+					partforvisualizing.Transparency = transparency
+					partforvisualizing.Size = Vector3.new(reach,reach,reach)
+					partforvisualizing.CFrame = handle.CFrame
+		            for _,v in pairs(game.Players:GetPlayers()) do
+		                local hrp = v.Character and v.Character:FindFirstChild("HumanoidRootPart")
+		                if hrp and handle then
+		                    local mag = (hrp.Position-handle.Position).magnitude
+		                    if mag <= reach then
+		                        onHit(hrp,handle)
+		                    end
+		                end
+					end
+				elseif rtype == "Block" then
+					local origin = (handle.CFrame*CFrame.new(0,0,-2)).p
+		    		local ray = Ray.new(origin,handle.CFrame.lookVector*-reach)
+					local p,pos = workspace:FindPartOnRayWithWhitelist(ray,getWhiteList())
+					partforvisualizing.Shape = Enum.PartType.Block
+					partforvisualizing.Size = Vector3.new(1,0.8,reach)
+					partforvisualizing.CFrame = handle.CFrame*CFrame.new(0,0,(reach/2)+2)
+               partforvisualizing.Material = material
+               partforvisualizing.Transparency = transparency
+		    		if p then
+		    		    onHit(p,handle)
+		    		else
+		    		    for _,v in pairs(handle:GetTouchingParts()) do
+		    		        onHit(v,handle)
+		    		    end
+		    		end
+                elseif rtype == "Cylinder" then
+               partforvisualizing.Shape = Enum.PartType.Cylinder
+					partforvisualizing.Material = material
+					partforvisualizing.Transparency = transparency
+					partforvisualizing.Size = Vector3.new(reach,reach,reach)
+					partforvisualizing.CFrame = handle.CFrame
+		            for _,v in pairs(game.Players:GetPlayers()) do
+		                local hrp = v.Character and v.Character:FindFirstChild("HumanoidRootPart")
+		                if hrp and handle then
+		                    local mag = (hrp.Position-handle.Position).magnitude
+		                    if mag <= reach then
+		                        onHit(hrp,handle)
+		                    end
+		                end
+					end
+                elseif rtype == "Wedge" then
+               partforvisualizing.Shape = Enum.PartType.Wedge
+					partforvisualizing.Material = material
+					partforvisualizing.Transparency = transparency
+					partforvisualizing.Size = Vector3.new(reach,reach,reach)
+					partforvisualizing.CFrame = handle.CFrame
+		            for _,v in pairs(game.Players:GetPlayers()) do
+		                local hrp = v.Character and v.Character:FindFirstChild("HumanoidRootPart")
+		                if hrp and handle then
+		                    local mag = (hrp.Position-handle.Position).magnitude
+		                    if mag <= reach then
+		                        onHit(hrp,handle)
+		                    end
+		                end
+					end
+				end
+			end
+        end
+    end
+end)
+
+Rayfield:LoadConfiguration()
